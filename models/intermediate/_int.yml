@@ -54,3 +54,34 @@ models:
       - name: payment_id
         description: Primary key — payment-attempt identifier.
         data_tests: [unique, not_null]
+
+
+
+  - name: int_potion_supply_cost
+    description: Standard ingredient supply cost at one row per potion recipe.
+    columns:
+      - name: potion_sku
+        description: Primary key — potion SKU.
+        data_tests: [unique, not_null]
+      - name: ingredient_count
+        description: Number of ingredients in the recipe.
+        data_tests: [not_null]
+      - name: supply_cost_per_potion_copper
+        description: Current standard recipe cost for one potion in copper.
+        data_tests: [not_null]
+      - name: supply_cost_per_potion_gold
+        description: Current standard recipe cost for one potion in gold.
+        data_tests: [not_null]
+
+  - name: int_brews_with_supply_cost
+    description: Brew-event grain enriched with standard ingredient supply cost.
+    columns:
+      - name: brew_id
+        description: Primary key — brew event identifier.
+        data_tests: [unique, not_null]
+      - name: batch_supply_cost_copper
+        description: Standard ingredient supply cost for the full batch in copper.
+        data_tests: [not_null]
+      - name: batch_supply_cost_gold
+        description: Standard ingredient supply cost for the full batch in gold.
+        data_tests: [not_null]

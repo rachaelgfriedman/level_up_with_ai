@@ -13,7 +13,7 @@ The goal is one approved build spec created from `references/build-spec-template
 - Do not create or edit dbt models, properties YAML, metrics, macros, or tests.
 - Do not create a second plan, source-to-target document, checklist, or review file.
 - Do not review an implementation or investigate a job failure.
-- Do not use `models/answer_key/` or `training_assets/reference/` as planning evidence.
+- Do not use `training_assets/reference/` as planning evidence.
 
 ## Required context and evidence
 
@@ -48,7 +48,8 @@ The planning outcome must be one project-owned build spec that:
 
 ### 1. Establish the planning target
 
-Confirm the requested outcome, target root, public products, consumers, and exclusions. Determine the project-owned output path before creating a file. For Merlin & Co., use `docs/merlinco/ALEMBIC_BUILD_SPEC.yml` and `models/wizard/`.
+Confirm the requested outcome, canonical target paths, public products, consumers, and exclusions. Determine the project-owned output paths before creating a file. For Merlin & Co., use `docs/merlinco/ALEMBIC_BUILD_SPEC.yml` and the canonical `models/staging/alembic_ops/`, `models/intermediate/`, and `models/marts/` paths. The `models/wizard/` tree is a participant workspace whose node names use the `__wizard` suffix and is outside the canonical implementation scope.
+
 
 If a spec exists, read it first. Preserve valid evidence and decisions, but reset an approved plan to draft before materially changing its model, interface, test, contract, semantic, or validation design. Never overwrite implementation verification.
 

@@ -6,8 +6,8 @@ version: 2
 sources:
   - name: grimoire_crm
     description: "Grimoire CRM — customers (wizards), guilds, and SCD2 memberships."
-    database: raw
-    schema: dbt_jstayton
+    database: analytics
+    schema: DBT_RFRIEDMAN_MERLIN_DEV_RAW
     tables:
       - name: raw_customers
         description: "Wizards (customers)."

@@ -26,13 +26,14 @@ Read `AGENTS.md` and `SECURITY.md` first. Start from the requested outcome, then
 | Investigate a failed, warning-bearing, slow, or intermittent dbt Platform run | `.agents/skills/investigating-dbt-job-failures/SKILL.md` | Current project, job/run ID, run evidence, and action authority | Diagnose first; route approved code changes through the applicable planning/implementation/review path. |
 | Documentation-only or clearly non-material change | `AGENTS.md` | No build spec by default | Apply proportionate validation; reroute if policy, contracts, sources, semantics, or public behavior become material. |
 
-The staging, intermediate, and mart execution skills are required prerequisites for the orchestrator. They are intentionally absent from the trainee starter state and are created during the skill-building demos. The trainer prompts under `training_assets/reference/docs/prompts/` are facilitator-only reproducibility assets, not implementation evidence.
+The staging, intermediate, and mart execution skills are required prerequisites for the orchestrator and must remain active under `.agents/skills/`. Facilitator assets under `training_assets/reference/` and transitional answer-key models are not implementation evidence.
 
 ## Cross-route boundaries
 
 Every route must:
 
-- preserve completed starter models, unaffected interfaces, layer rules, and governed semantic definitions;
+- preserve unaffected interfaces, layer rules, governed semantic definitions, and the isolation between canonical reference models and the Wizard participant workspace;
+
 - consume approved decisions exactly and return material contradictions to planning;
 - prompt back on unresolved authority, grain, fanout, retention, business meaning, units, nulls, public interfaces, cost, risk, or action permissions;
 - use scoped dbt execution and result checks appropriate to the change;

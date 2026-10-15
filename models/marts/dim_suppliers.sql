@@ -1,5 +1,5 @@
 with suppliers as (
-    select * from {{ ref('stg_alembic_ops__suppliers__expected') }}
+    select * from {{ ref('stg_alembic_ops__suppliers') }}
 ),
 
 final as (

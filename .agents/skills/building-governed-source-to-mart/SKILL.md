@@ -4,7 +4,7 @@ Use this skill when an approved project-owned source-to-mart build specification
 
 ## Trigger and goal
 
-Trigger this skill only after `planning-governed-source-to-mart` has produced an approved active spec and the required staging, intermediate, and mart execution skills exist. For the Merlin & Co. exercise, the expected spec is `docs/merlinco/ALEMBIC_BUILD_SPEC.yml` and the target root is `models/wizard/`.
+Trigger this skill only after `planning-governed-source-to-mart` has produced an approved active spec and the required staging, intermediate, and mart execution skills exist. For the Merlin & Co. exercise, the expected spec is `docs/merlinco/ALEMBIC_BUILD_SPEC.yml`; canonical implementation paths are `models/staging/alembic_ops/`, `models/intermediate/`, and `models/marts/`.
 
 The goal is to implement exactly the approved model inventory, lineage, ordered SQL outputs, properties, tests, and contracts; prove behavior with scoped dbt execution and warehouse checks; update only the spec's `verification` section; and hand a truthful result to governed review.
 
@@ -12,8 +12,9 @@ The goal is to implement exactly the approved model inventory, lineage, ordered 
 
 - Do not create, reinterpret, amend, or approve the design.
 - Do not add plausible models, columns, tests, metrics, mappings, cleanup, formulas, or lineage outside the approved spec.
-- Do not use `models/answer_key/`, `training_assets/reference/`, a generic template, or another facilitator asset as implementation input.
-- Do not edit completed starter models, the Warlock baseline, unrelated files, generated files, or vendored packages.
+- Do not use `training_assets/reference/`, a generic template, or another facilitator asset as implementation input.
+- Do not edit the `models/wizard/` participant workspace, unrelated canonical models, generated files, or vendored packages.
+
 - Do not create a second plan, source-to-target document, checklist, review file, or validation report.
 - Do not silently delete or overwrite unexplained target-root work.
 - Do not deploy, merge, trigger production jobs, mutate production data, or bypass tests, contracts, lint, CI, review, or approval controls.
@@ -41,7 +42,7 @@ The completed orchestration must:
 - reproduce exact approved properties descriptions, column entries, data types, tests, test arguments, contracts, and semantic scope;
 - preserve staging source grain and retention, intermediate join/fanout controls, and mart public interfaces;
 - introduce no unplanned model, column, dependency, test, metric, semantic object, or persistent artifact;
-- use only active project evidence and active skills, never facilitator or answer-key content;
+- use only active project evidence and active skills, never facilitator-only content;
 - execute ephemeral intermediates through the approved materialized downstream build and validate their output directly when needed;
 - keep verification status truthful: readiness failures leave it unchanged, started attempts become `in_progress`, execution/acceptance failures become `failed`, and only complete success becomes `passed` with `ready_for_review: true`;
 - preserve partial explainable work after failure so a later attempt can inspect and resume it safely rather than recreating or deleting it blindly.

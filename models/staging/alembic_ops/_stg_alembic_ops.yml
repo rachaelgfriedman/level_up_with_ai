@@ -19,3 +19,142 @@ models:
           - accepted_values:
               arguments:
                 values: ["Northern Reaches", "Ember Coast", "Silverwood", "The Marshlands", "Crystal Vale"]
+
+
+  - name: stg_alembic_ops__suppliers
+    description: One row per ingredient supplier with typed reliability and contract fields.
+    columns:
+      - name: supplier_id
+        description: Primary key — supplier identifier.
+        data_tests: [unique, not_null]
+      - name: supplier_name
+        description: Supplier display name.
+        data_tests: [not_null]
+      - name: region
+        description: Supplier region.
+        data_tests: [not_null]
+      - name: reliability_rating
+        description: Reliability rating from 1 to 5.
+        data_tests: [not_null]
+      - name: contracted_since
+        description: Date the supplier contract began.
+        data_tests: [not_null]
+
+  - name: stg_alembic_ops__ingredients
+    description: One row per ingredient with normalized procurement attributes and unit cost.
+    columns:
+      - name: ingredient_id
+        description: Primary key — ingredient identifier.
+        data_tests: [unique, not_null]
+      - name: ingredient_name
+        description: Ingredient display name.
+        data_tests: [not_null]
+      - name: supplier_id
+        description: FK to the ingredient supplier.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_alembic_ops__suppliers')
+                field: supplier_id
+      - name: unit
+        description: Lowercased ingredient measurement unit.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [bundle, dram, gram, pinch, sprig, vial]
+      - name: unit_cost_copper
+        description: Current unit cost in copper pieces.
+        data_tests: [not_null]
+      - name: unit_cost_gold
+        description: Current unit cost in gold crowns.
+        data_tests: [not_null]
+      - name: is_hazardous
+        description: Whether the ingredient is hazardous.
+        data_tests: [not_null]
+      - name: harvest_season
+        description: Lowercased harvest season.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [autumn, spring, summer, winter, year-round]
+
+  - name: stg_alembic_ops__potion_ingredients
+    description: Recipe bridge at one row per potion and ingredient.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: [potion_sku, ingredient_id]
+    columns:
+      - name: potion_sku
+        description: Potion SKU in the recipe.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_abra_pos__potions')
+                field: potion_sku
+      - name: ingredient_id
+        description: Ingredient in the recipe.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_alembic_ops__ingredients')
+                field: ingredient_id
+      - name: quantity
+        description: Ingredient units required per potion.
+        data_tests: [not_null]
+      - name: unit
+        description: Lowercased recipe measurement unit.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [bundle, dram, gram, pinch, sprig, vial]
+
+  - name: stg_alembic_ops__brew_events
+    description: Production batches at one row per brew event.
+    columns:
+      - name: brew_id
+        description: Primary key — brew event identifier.
+        data_tests: [unique, not_null]
+      - name: potion_sku
+        description: FK to the potion brewed.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_abra_pos__potions')
+                field: potion_sku
+      - name: shop_id
+        description: FK to the brewing shop.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_alembic_ops__shops')
+                field: shop_id
+      - name: cauldron_id
+        description: Operational cauldron identifier.
+        data_tests: [not_null]
+      - name: brewed_at
+        description: Brew timestamp.
+        data_tests: [not_null]
+      - name: batch_size
+        description: Potion units produced in the batch.
+        data_tests: [not_null]
+      - name: brew_duration_minutes
+        description: Brew duration in minutes; nullable in the source.
+      - name: quality_check
+        description: Lowercased quality result.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [fail, pass]
+      - name: brewer_name
+        description: Name of the brewer.
+        data_tests: [not_null]

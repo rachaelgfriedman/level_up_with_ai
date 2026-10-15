@@ -11,18 +11,16 @@ other model.
 ```text
 seeds/medium_data/   portable raw CSV fixtures for facilitator/environment setup
 models/
-  staging/<source>/  completed source declarations and source-facing patterns
-  intermediate/      completed join, fanout, and aggregation patterns
-  marts/             completed contracted marts and semantic definitions
-  warlock/            trainee baseline, mirrored staging/intermediate/marts
-  wizard/             trainee governed build, mirrored staging/intermediate/marts
-  answer_key/         disabled facilitator comparison implementation
+  staging/<source>/  canonical source-facing models and source declarations
+  intermediate/      canonical join, fanout, and aggregation models
+  marts/             canonical contracted marts and semantic definitions
+  wizard/            participant workspace, mirrored staging/intermediate/marts
 macros/               shared cleaning logic
 ```
 
-The completed standard-layer models are read-only workshop patterns. Trainees build the Alembic slice under `models/warlock/` and then `models/wizard/` without moving or modifying those existing models.
+The canonical layers are the validated reference source of truth. Participants build the Alembic slice under `models/wizard/` without modifying canonical models and append `__wizard` to each participant node name so both implementations can coexist.
 
-**Seeds vs. sources.** Workshop raw relations are pre-built, so trainees work through `source()` and do not need to load seeds. The committed seeds keep the project self-contained for facilitators provisioning another Snowflake account or reusing the project in another training. Staging still reads through `source()`, not `ref()` on a seed, because that reflects the production pattern and supports source-level metadata and tests.
+**Seeds vs. sources.** Workshop raw relations are pre-built, so participants work through `source()` and do not need to load seeds. The committed seeds keep the project self-contained for facilitators provisioning another Snowflake account or reusing the project in another training. Staging still reads through `source()`, not `ref()` on a seed, because that reflects the production pattern and supports source-level metadata and tests.
 
 ## Layering, in detail
 
@@ -32,12 +30,13 @@ The completed standard-layer models are read-only workshop patterns. Trainees bu
 
 **Marts** are public data products. Dimensions (`dim_`) describe entities; facts (`fct_`) record events at a stated grain. This is the contracted and tested layer intended for BI, semantic, and AI-assisted consumption.
 
-Both trainee tracks mirror these layers and use the standard `staging` and `marts` schemas.
+The Wizard workspace mirrors these layers and uses the same standard `staging` and `marts` schemas with distinct suffixed relation names.
 
 ## Naming and structure
 
-- Canonical Wizard models use `stg_<source>__<entity>`, `int_<description>`, `dim_<noun>`, and `fct_<noun>`.
-- Warlock nodes append `__warlock` to the equivalent logical name solely because dbt node names must be unique within a project.
+- Canonical models use `stg_<source>__<entity>`, `int_<description>`, `dim_<noun>`, and `fct_<noun>`.
+- Wizard participant nodes append `__wizard` to the equivalent logical name solely because dbt node names must be unique within a project.
+
 - Use import CTEs first, transformation CTEs as needed, a `final` CTE, then `select * from final`.
 - Use `snake_case` and lowercase SQL keywords and identifiers.
 - PKs use `<entity>_id`; booleans use `is_*`/`has_*`; timestamps use `*_at`; dates use `*_date` or a date-typed `*_at`.

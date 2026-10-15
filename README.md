@@ -6,18 +6,18 @@ relations are pre-built in Snowflake, and the project builds staging → interme
 → marts on top with dbt Fusion. Committed seeds preserve project portability for
 facilitator setup and reuse in other training environments.
 
-The project is built out ~90% as a **governed reference project** (contracts, tests,
-a semantic layer, conventions, and CI). One complete `source → mart` vertical — the
-`alembic_ops` procurement / supply-cost slice — is deliberately left **unbuilt**.
-Trainees build it twice: first as a minimally governed baseline under `models/warlock/`,
-then as a governed implementation under `models/wizard/`. The completed starter-state
-models remain untouched.
+The project is built out as a **governed reference project** with contracts, tests,
+a semantic layer, conventions, and CI. The completed `alembic_ops` procurement /
+supply-cost slice lives in the canonical staging → intermediate → marts layers.
+Workshop participants build their own governed version under `models/wizard/` using
+`__wizard` node-name suffixes so both DAGs can coexist.
 
 **New here?** Read [AGENTS.md](AGENTS.md) and
 [docs/merlinco/STYLE_GUIDE.md](docs/merlinco/STYLE_GUIDE.md) first.
 
 
 ## Workshop quickstart
+
 
 The workshop environment already contains the raw source relations. Trainees do not
 need to load seeds.
@@ -45,9 +45,7 @@ models/
 ├── staging/          # completed source-facing models and source declarations
 ├── intermediate/     # completed join, fanout, and aggregation patterns
 ├── marts/            # completed contracted marts and semantic definitions
-├── warlock/          # trainee baseline: staging/intermediate/marts
-├── wizard/           # trainee governed build: staging/intermediate/marts
-└── answer_key/       # disabled facilitator comparison models
+└── wizard/           # participant workspace; nodes use the __wizard suffix
 macros/               # shared cleaning macros (to_boolean, copper_to_gold, conform_region, …)
 seeds/medium_data/    # portable raw CSV fixtures for facilitator/environment setup
 docs/merlinco/
@@ -56,9 +54,9 @@ docs/merlinco/
 └── STYLE_GUIDE.md             # modeling + naming conventions
 ```
 
-The Warlock track uses `__warlock` node-name suffixes to avoid collisions. The Wizard
-track uses the canonical target names. Both tracks use the project’s standard `staging`
-and `marts` schemas; their distinct relation names allow them to coexist.
+Canonical reference models live in `models/staging/`, `models/intermediate/`, and
+`models/marts/`. The isolated Wizard participant workspace uses `__wizard` node-name
+suffixes so participant relations can coexist with the canonical implementation.
 
 
 The `medium_data` tier (~15k orders / ~51k order items / 5k customers) is the lab default
@@ -97,14 +95,14 @@ erDiagram
 
 ## Downstream models (Kimball)
 
-Built out today (hero path) vs. left for the hands-on procurement lab:
+Canonical models now cover both the core sales path and the Alembic procurement and brewing slice. The same Alembic outcome remains the hands-on exercise target under `models/wizard/` with `__wizard` suffixes.
 
-| Layer | Built | Lab (unbuilt) |
-|---|---|---|
-| staging | `stg_` for potions, orders, order_items, payments, customers, guilds, guild_memberships, shops | suppliers, ingredients, potion_ingredients, brew_events |
-| intermediate | `int_customers_with_current_membership`, `int_memberships_current`, `int_order_items_with_order_context`, `int_orders_with_payments`, `int_payments_with_order_context` | `int_potion_supply_cost`, `int_brews_with_supply_cost` |
-| dims | `dim_wizards`, `dim_potions`, `dim_shops`, `dim_dates` | `dim_suppliers` |
-| facts | `fct_orders`, `fct_order_items`, `fct_payments` | `fct_brews` |
+| Layer | Canonical models |
+|---|---|
+| staging | `stg_` models for potions, orders, order items, payments, customers, guilds, guild memberships, shops, suppliers, ingredients, potion ingredients, and brew events |
+| intermediate | `int_customers_with_current_membership`, `int_memberships_current`, `int_order_items_with_order_context`, `int_orders_with_payments`, `int_payments_with_order_context`, `int_potion_supply_cost`, `int_brews_with_supply_cost` |
+| dims | `dim_wizards`, `dim_potions`, `dim_shops`, `dim_dates`, `dim_suppliers` |
+| facts | `fct_orders`, `fct_order_items`, `fct_payments`, `fct_brews` |
 
 Staging normalizes the deliberate raw quirks via shared macros (`to_boolean`,
 `copper_to_gold`, `conform_region` in [macros/](macros/)) plus direct casts and

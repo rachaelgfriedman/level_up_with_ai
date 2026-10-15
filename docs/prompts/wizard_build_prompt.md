@@ -1,9 +1,9 @@
-# Prompt: Building the new source
+# Prompt: Building the participant solution
 
-Use this prompt to build the Alembic slice.
+Use this prompt to build the Wizard Alembic slice.
 
 ```text
-Use `building-governed-source-to-mart` to implement the approved source-to-mart slice in `docs/merlinco/ALEMBIC_BUILD_SPEC.yml` under `models/wizard/`.
+Implement the approved participant source-to-mart slice under `models/wizard/`. Append `__wizard` to every participant model name and use suffixed refs so the participant DAG can coexist with the canonical reference implementation.
 
-Enforce the readiness gate before editing. Follow the active layer skills in dependency order, implement exactly the approved spec, run all required scoped validation and warehouse checks, and update only the spec's `verification` section outside the planned implementation files. Do not use facilitator references or answer-key models. If a gate fails or evidence contradicts the approved design, stop with the exact blocker and required handoff; otherwise continue until the implementation is ready for governed review.
+Follow the active layer guidance in dependency order, implement exactly the approved participant scope, and run Wizard-scoped validation and warehouse checks. Do not use facilitator references, retired answer-key models, or canonical Alembic implementation SQL as implementation input. If evidence contradicts the approved design, stop with the exact blocker and required decision.
 ```

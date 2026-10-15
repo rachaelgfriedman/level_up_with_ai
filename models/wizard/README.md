@@ -1,6 +1,6 @@
-# Wizard workshop track
+# Wizard participant workspace
 
-Trainees build the governed Alembic procurement solution here after creating the workshop governance resources. This track is isolated from the completed starter-state models under `models/staging/`, `models/intermediate/`, and `models/marts/`; do not edit those models during the exercise.
+Participants build their own governed Alembic procurement solution here. The validated reference implementation lives in the canonical `models/staging/`, `models/intermediate/`, and `models/marts/` layers; do not edit those canonical models during the exercise.
 
 Use the mirrored layer paths:
 
@@ -10,6 +10,6 @@ models/wizard/intermediate/
 models/wizard/marts/
 ```
 
-Use the canonical unsuffixed model names from the approved target lineage, such as `stg_alembic_ops__suppliers`, `int_potion_supply_cost`, and `fct_brews`. Keep properties YAML within the corresponding Wizard layer.
+Append `__wizard` to every participant model filename and use those suffixed names in `ref()` and properties YAML. For example: `stg_alembic_ops__suppliers__wizard.sql`, `int_potion_supply_cost__wizard.sql`, and `fct_brews__wizard.sql`. This keeps participant nodes distinct from the enabled canonical reference models.
 
-Do not use `models/answer_key/` as an implementation source.
+Plan and implement from active project evidence and the participant's approved build spec. Do not use facilitator reference assets or retired answer-key models as implementation input.

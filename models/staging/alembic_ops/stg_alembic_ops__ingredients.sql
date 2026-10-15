@@ -11,7 +11,7 @@ renamed as (
         unit_cost_copper::integer as unit_cost_copper,
         {{ copper_to_gold('unit_cost_copper') }} as unit_cost_gold,
         {{ to_boolean('is_hazardous') }} as is_hazardous,
-        harvest_season
+        lower(trim(harvest_season)) as harvest_season
     from source
 ),
 
