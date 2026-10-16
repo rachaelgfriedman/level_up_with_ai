@@ -1,5 +1,5 @@
 -- Order-grain fact. One row per order, with revenue/payment measures and
--- conformed customer, shop, and fulfillment-region attributes.
+-- conformed customer, shop, and region attributes.
 
 with orders as (
     select * from {{ ref('int_orders_with_payments') }}
@@ -14,6 +14,7 @@ final as (
         fulfillment_region::varchar as fulfillment_region,
 
         -- attributes
+        is_home_region_order::boolean as is_home_region_order,
         order_status::varchar as order_status,
         channel::varchar as channel,
 

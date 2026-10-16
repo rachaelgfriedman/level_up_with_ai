@@ -19,3 +19,10 @@ models:
           - accepted_values:
               arguments:
                 values: ["Northern Reaches", "Ember Coast", "Silverwood", "The Marshlands", "Crystal Vale"]
+
+  - name: stg_alembic_ops__brew_events
+    description: Production batches at one row per brew.
+    columns:
+      - name: brew_id
+        description: Primary key — brew identifier.
+        data_tests: [unique, not_null]

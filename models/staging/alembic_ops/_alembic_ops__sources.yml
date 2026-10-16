@@ -1,18 +1,12 @@
 version: 2
 
-# Raw Alembic Ops tables as dbt sources over pre-built workshop relations in
-# apothecaries.raw. Committed seeds are portability fixtures for facilitator or
-# environment setup, not a trainee prerequisite.
-#
-# Four procurement tables intentionally have no completed staging models; trainees
-# build those models in the Warlock and Wizard tracks over these declarations.
-
-
+# Raw Alembic Ops tables as dbt sources over pre-built workshop relations.
+# Committed seeds are portability fixtures for facilitator or environment setup.
 sources:
   - name: alembic_ops
-    description: "Alembic Ops — production & procurement (shops, suppliers, ingredients, recipes, brews)."
-    database: raw
-    schema: dbt_jstayton
+    description: "Alembic Ops — shop and brew operations."
+    database: analytics
+    schema: pacific_life_merlin_co_dev_raw
     tables:
       - name: raw_shops
         description: "Shops (15 rows, 3 per region). region is the canonical spelling."
@@ -21,28 +15,6 @@ sources:
             description: Primary key — shop identifier (SHP-01).
             data_tests: [unique, not_null]
 
-      # ---- procurement / supply-cost slice (lab source tables) ----
-      - name: raw_suppliers
-        description: "Ingredient suppliers."
-        columns:
-          - name: supplier_id
-            description: Primary key — supplier identifier (SUP-01).
-            data_tests: [unique, not_null]
-      - name: raw_ingredients
-        description: "Ingredients, each sourced from one supplier."
-        columns:
-          - name: ingredient_id
-            description: Primary key — ingredient identifier (ING-001).
-            data_tests: [unique, not_null]
-      - name: raw_potion_ingredients
-        description: "Recipe bridge — composite key (potion_sku, ingredient_id)."
-        columns:
-          - name: potion_sku
-            description: Part of composite key; FK to raw_potions.
-            data_tests: [not_null]
-          - name: ingredient_id
-            description: Part of composite key; FK to raw_ingredients.
-            data_tests: [not_null]
       - name: raw_brew_events
         description: "Production batches — one row per brew."
         columns:

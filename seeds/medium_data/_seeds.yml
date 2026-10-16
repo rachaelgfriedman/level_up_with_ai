@@ -1,11 +1,7 @@
 version: 2
 
-# Seeds populate the raw landing zone (<target_schema>_raw). Every column loads
-# as text on purpose — staging does the typing/cleaning. These same tables are
-# declared as dbt SOURCES in models/staging/<system>/_<system>__sources.yml,
-# and that is where the raw-data tests (PK unique/not_null) live, so staging can
-# read them via source(). Descriptions stay here to document the raw feed.
-
+# Seeds populate the raw landing zone. Every column loads as text on purpose so
+# staging owns typing and cleanup. Matching dbt sources carry raw-data tests.
 seeds:
   # ---------------- abra_pos ----------------
   - name: raw_potions
@@ -28,12 +24,5 @@ seeds:
   # ---------------- alembic_ops ----------------
   - name: raw_shops
     description: "Alembic Ops shops (15 rows). Source: alembic_ops.raw_shops."
-  - name: raw_suppliers
-    description: "Alembic Ops suppliers used in the procurement exercise."
-
-  - name: raw_ingredients
-    description: "Alembic Ops ingredients (procurement lab)."
-  - name: raw_potion_ingredients
-    description: "Alembic Ops recipe bridge — composite key (potion_sku, ingredient_id) (procurement lab)."
   - name: raw_brew_events
-    description: "Alembic Ops production batches (procurement lab)."
+    description: "Alembic Ops production batches (8,000 rows). Source: alembic_ops.raw_brew_events."
