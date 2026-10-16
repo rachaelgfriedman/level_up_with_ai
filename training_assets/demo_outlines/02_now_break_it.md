@@ -2,51 +2,39 @@
 
 ## Summary
 
-Have trainees issue a deliberately underspecified request before the repository’s three discovery TODOs and layer skills are complete. The goal is not guaranteed failure; it is visible variation, hidden assumptions, and expensive review.
+Issue a deliberately underspecified request before project discovery and staging-skill
+authoring. The goal is visible variation, hidden assumptions, and expensive review.
 
 ## Prompt
 
 ```text
-Build models for the alembic_ops source in models/warlock; give each model the suffix '__warlock'.
+Build a staging model and brew fact from the alembic_ops brew events source.
 ```
 
-## Relevant files
+## Isolation
 
-- `models/warlock/`
-- Alembic source declarations under `models/staging/alembic_ops/`
-- Whatever SQL/YAML each Warlock creates
+Run this attempt on a throwaway branch, or keep every generated file uncommitted. Save
+the diff or conversation output for comparison, then restore the clean starting state
+before Demo 3. Do not repair this attempt into the governed solution.
 
-Do not use `models/answer_key/` or `training_assets/reference/`.
+## Optional commands
 
-## Optional dbt commands
-
-Run only after the Warlock has produced a coherent selector:
+If the attempt produced coherent canonical targets:
 
 ```text
-dbt ls --select tag:warlock
-dbt build --select tag:warlock
+dbt parse --no-partial-parse
+dbt build --select +fct_brews
 ```
 
-A failed or incomplete build is valid discussion evidence; do not spend the workshop repairing this track into the governed solution.
+## Comparison questions
 
-## Small-group comparison questions
-
-- What models and layers did your Warlock create?
-- Where did it put joins and grain changes?
-- What grain did it assume for each output?
-- Which names, columns, formulas, null rules, or unit rules did it invent?
-- What tests, descriptions, and contracts did it add or omit?
-- What did it inspect before writing code?
-- What evidence would you need before approving this?
-- How different are the implementations across groups?
-
-## PPT talking points
-
-- A plausible build can still be expensive to review.
-- More prompt detail would help once; durable project guidance should help repeatedly.
-- Passing SQL is not the same as approved meaning or proven grain.
-- Preserve the Warlock output for comparison with Demo 7.
+- Which columns, types, null rules, and tests did it assume?
+- Did it normalize quality and preserve duration nulls?
+- Did it add an unnecessary intermediate model or hidden business logic?
+- Did the fact enforce the intended ten-column interface?
+- What evidence did it inspect before writing code?
 
 ## Exit state
 
-Trainees feel the cost of underspecified authorship and can identify assumptions that should become durable context, reusable skills, or explicit human decisions.
+Trainees feel the cost of underspecified authorship and retain a bounded comparison
+artifact without contaminating the governed branch.

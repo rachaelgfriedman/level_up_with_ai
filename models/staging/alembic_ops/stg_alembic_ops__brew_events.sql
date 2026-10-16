@@ -8,11 +8,11 @@ renamed as (
         potion_sku,
         shop_id,
         cauldron_id,
-        brewed_at::timestamp_ntz as brewed_at,
+        lower(trim(quality_check)) as quality_check,
+        brewer_name,
         batch_size::integer as batch_size,
         brew_duration_minutes::integer as brew_duration_minutes,
-        lower(trim(quality_check)) as quality_check,
-        brewer_name
+        brewed_at::timestamp_ntz as brewed_at
     from source
 ),
 
@@ -22,11 +22,11 @@ final as (
         potion_sku,
         shop_id,
         cauldron_id,
-        brewed_at,
+        quality_check,
+        brewer_name,
         batch_size,
         brew_duration_minutes,
-        quality_check,
-        brewer_name
+        brewed_at
     from renamed
 )
 

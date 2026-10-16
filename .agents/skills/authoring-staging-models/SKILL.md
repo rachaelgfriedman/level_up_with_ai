@@ -10,7 +10,7 @@ Create a thin, source-facing model with one `source()` input, explicit cleanup, 
 
 - Do not join, aggregate, deduplicate, or apply business classifications.
 - Do not invent columns, mappings, accepted values, or null handling.
-- Do not use participant, facilitator, answer-key, generated, or vendored code as implementation input.
+- Do not use facilitator-only, generated, or vendored code as implementation input.
 
 ## Required context and evidence
 

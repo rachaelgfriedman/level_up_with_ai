@@ -2,63 +2,40 @@
 
 ## Summary
 
-Trainees inspect the existing project and complete the three bounded `TODO(training):` sections in root `AGENTS.md`. The exercise captures durable project context—not the Alembic solution and not a task-specific checklist.
+Trainees inspect active project evidence and complete the three bounded discovery TODOs
+in root `AGENTS.md`. The result is durable project context, not implementation logic.
 
 ## Relevant files
 
-- `AGENTS.md`
-- `training_assets/reference/AGENTS.md` — facilitator convergence check only, never Wizard input
-- `README.md`
-- `dbt_project.yml`
+- `AGENTS.md`, `README.md`, `dbt_project.yml`, and `SECURITY.md`
+- `.agents/ROUTING.md`
 - `docs/merlinco/`
-- representative SQL/YAML under `models/staging/`, `models/intermediate/`, and `models/marts/`
+- representative SQL/YAML in each model layer
 - `macros/`
 
-## TODO 1 — Project map and authority
+## Guided questions
 
-Guide trainees to answer:
-
-- What business domains and source systems exist?
-- Which paths are completed/read-only patterns?
-- Which paths are learner workspaces?
-- Which files govern source structure, requested outcomes, modeling conventions, routing, and security?
-- Which folders must never be used as trainee evidence?
-
-## TODO 2 — Layer, grain, naming, and SQL patterns
-
-Guide trainees to answer:
-
-- What belongs in staging, intermediate, and marts?
-- Where may grain change, joins, deduplication, and aggregation occur?
-- What are the effective materializations?
-- What naming differences isolate Warlock and Wizard nodes?
-- How do `source()`, `ref()`, import CTEs, transformation CTEs, and `final` appear in completed models?
-
-## TODO 3 — Documentation, testing, contracts, and evidence
-
-Guide trainees to answer:
-
-- Which tests protect PKs, FKs, categoricals, required fields, and composite grains?
-- How are accepted values grounded?
-- How are copper and gold fields represented?
-- What do public mart contracts require from SQL and YAML?
-- Why are descriptions, scoped builds, lint, and warehouse checks separate evidence?
+1. Which source systems, layers, and models already exist, and which two are missing?
+2. Where may cleanup, joins, grain changes, and public contracts occur?
+3. How do `source()`, `ref()`, import CTEs, transformations, and `final` appear?
+4. Which tests protect keys, relationships, normalized values, and required fields?
+5. Why are parse, build, lint, warehouse checks, and review separate evidence?
 
 ## Optional Wizard prompt
 
 ```text
-Help us complete the three TODO(training) sections in AGENTS.md. Inspect only the active project files named by each TODO, summarize the patterns you find, and propose concise durable policy language. Do not inspect training_assets/reference or models/answer_key, do not edit models, and do not add Alembic-specific implementation decisions.
+Help us complete the three discovery TODOs in AGENTS.md from the active files named by
+each TODO. Propose concise durable policy language. Do not edit models or add
+Alembic-specific implementation decisions.
 ```
 
-## dbt commands
+## Commands
 
 ```text
 dbt ls --resource-type model
 dbt parse --no-partial-parse
 ```
 
-The parse is a project regression check; it does not validate Markdown policy.
-
 ## Exit state
 
-Root `AGENTS.md` contains no training TODOs and is conceptually aligned with `training_assets/reference/AGENTS.md` without requiring identical prose.
+Root `AGENTS.md` contains durable project guidance grounded in active evidence.

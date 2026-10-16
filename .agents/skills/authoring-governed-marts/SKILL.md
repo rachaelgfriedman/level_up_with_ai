@@ -10,7 +10,7 @@ Publish the simplest approved public projection at a declared grain with an enfo
 
 - Do not move complex joins, fanout control, or unapproved business logic into the mart.
 - Do not add public columns, metrics, semantic objects, types, or breaking behavior outside the approved spec.
-- Do not use participant, facilitator, answer-key, generated, or vendored code as implementation input.
+- Do not use facilitator-only, generated, or vendored code as implementation input.
 
 ## Required context and evidence
 

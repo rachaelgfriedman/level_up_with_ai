@@ -1,48 +1,57 @@
 # Author grain-changing intermediate models
 
-Use this skill when creating or materially changing a dbt model that owns joins, deduplication, aggregation, enrichment, or fanout control.
+Use this skill when a model owns joins, deduplication, aggregation, enrichment, or
+fanout control. The current Alembic exercise does not require this skill.
 
 ## Trigger and goal
 
-Implement one approved grain transition with explicit inputs, cardinality, retention, arithmetic, and fanout controls while keeping the model ephemeral unless the approved spec says otherwise.
+Implement one approved grain transition with explicit inputs, cardinality, retention,
+arithmetic, and fanout controls while preserving the configured materialization.
 
 ## Non-goals
 
 - Do not publish a public interface or add semantic definitions.
-- Do not invent join keys, fallback logic, formulas, units, deduplication rules, or record-retention behavior.
-- Do not use participant, facilitator, answer-key, generated, or vendored code as implementation input.
+- Do not invent join keys, fallback logic, formulas, deduplication, or retention.
+- Do not use facilitator-only, generated, or vendored code as input.
 
 ## Required context and evidence
 
-Read the approved build spec, all upstream model outputs and properties, actual input key distributions, applicable macros, `dbt_project.yml`, the style guide, and one unrelated canonical intermediate pattern. Profile duplicates, null keys, match rates, unmatched populations, units, and control totals.
+Read the approved spec, upstream outputs/properties, actual key distributions,
+applicable macros, project configuration, style guide, and an unrelated completed
+pattern. Profile duplicates, null keys, match rates, unmatched populations, and
+control totals.
 
 ## Output invariants
 
-- Inputs, join types, keys, cardinalities, filters, grouping columns, formulas, and ordered outputs exactly match the approved spec.
-- The declared output grain is enforced without accidental fanout or silent record loss.
-- Units, precision, and null propagation remain explicit.
-- Properties and tests describe the post-transformation output.
+Inputs, joins, keys, cardinalities, filters, grouping, formulas, and ordered outputs
+match approval. Output grain is enforced without accidental fanout or silent loss.
+Properties and tests describe the post-transformation result.
 
 ## Workflow
 
-1. Profile each input at its declared grain and establish join cardinality and retention expectations.
-2. Implement import CTEs, bounded transformation CTEs, fanout controls, and an explicit `final` projection.
-3. Preview the development SQL to validate grain, retention, nulls, match rates, and arithmetic.
-4. Execute ephemeral SQL through the approved downstream mart build and run attached tests.
-5. Hand off cardinality, fanout, retention, and control-total evidence.
+1. Profile inputs and establish cardinality and retention.
+2. Implement import, bounded transformation, and explicit `final` CTEs.
+3. Preview grain, retention, nulls, match rates, and arithmetic.
+4. Execute ephemeral SQL through an approved materialized downstream node.
+5. Hand off cardinality, fanout, retention, and control evidence.
 
 ## Prompt-back conditions
 
-Stop for unsupported joins, ambiguous deduplication, unexpected many-to-many behavior, unmatched rows that affect retention, unclear units/formulas, or any conflict with the approved spec. State the evidence, options, recommendation, owner, and narrow approval question.
+Stop for unsupported joins, ambiguous deduplication, unexpected many-to-many behavior,
+unmatched rows affecting retention, unclear formulas, or spec conflict.
 
 ## Validation and completion evidence
 
-Completion requires successful execution through a materialized downstream node, passing tests, and warehouse evidence for grain uniqueness, join cardinality, row retention, fanout, null behavior, units, and arithmetic controls.
+Require successful downstream execution, passing tests, and warehouse evidence for
+grain uniqueness, join cardinality, retention, fanout, nulls, and approved arithmetic.
 
 ## Behavioral acceptance
 
-If a recipe-to-ingredient join multiplies brew rows, preserve recipe detail only at its approved grain, aggregate supply cost before joining to brews, and prove the final brew grain. Stop if the required allocation or aggregation rule is not approved.
+If joining payment attempts to orders duplicates order-grain rows, retain payment grain
+or aggregate using an approved rule before returning to order grain. Stop when the
+requested output grain or aggregation policy is not approved.
 
 ## Ownership and maintenance
 
-Analytics engineering owns intermediate behavior; data-product owners decide business formulas and retention. Review after fanout defects, changed source cardinality, or changed project conventions.
+Analytics engineering owns intermediate behavior; data-product owners decide formulas
+and retention. Review after fanout defects or changed source cardinality.

@@ -1,16 +1,18 @@
-# Prompt: Planning the participant solution
-
-Use this prompt to plan the Wizard Alembic slice.
+# Prompt: plan the Alembic exercise
 
 ```text
-Use `planning-governed-source-to-mart` to plan a participant Alembic procurement slice from active project and warehouse evidence. Keep implementation under `models/wizard/` and append `__wizard` to every participant model name so it can coexist with the canonical reference implementation.
+Use `planning-governed-source-to-mart` to validate and, if needed, refine the approved
+two-model Alembic plan in `docs/merlinco/ALEMBIC_BUILD_SPEC.yml`.
 
-The requested public products are participant versions of:
+The trainee products use canonical names and real project folders:
+- `models/staging/alembic_ops/stg_alembic_ops__brew_events.sql`
+- `models/marts/fct_brews.sql`
 
-- `dim_suppliers`, at one row per supplier, for procurement analysis;
-- `fct_brews`, at one row per brew event, for production analysis, including estimated standard ingredient supply cost based on recipe quantities and current ingredient unit costs.
+The staging model cleans one raw brew event source. The contracted fact reads directly
+from staging, publishes the approved ten columns, preserves null brew durations, and
+uses the requested key, relationship, and quality-domain tests. Existing semantic YAML
+is deferred to Day 2.
 
-Preserve all brew events. Actual procurement cost, margin, production-to-sales allocation, and Semantic Layer additions are out of scope unless explicitly approved during planning.
-
-Discover the required staging and intermediate lineage from active project conventions, source definitions, and warehouse evidence. Do not inspect or use `training_assets/reference/`, retired answer-key models, or canonical Alembic implementation SQL as planning evidence. Do not implement models while planning.
+Confirm the readiness gate requires both target models to be absent before building.
+Use active project and warehouse evidence only. Do not implement while planning.
 ```

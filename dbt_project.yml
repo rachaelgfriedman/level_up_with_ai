@@ -2,17 +2,11 @@ name: "merlinco_apothecaries"
 version: "1.0.0"
 config-version: 2
 
-# Connection profile. Locally this resolves against ~/.dbt/profiles.yml
-# (see profiles.example.yml); in the dbt platform the connection is managed
-# in the UI and this profile name is ignored.
 profile: "merlinco_apothecaries"
 
-# ---------------------------------------------------------------------------
-# Paths
-# ---------------------------------------------------------------------------
 model-paths: ["models"]
 macro-paths: ["macros"]
-seed-paths: ["seeds/medium_data"] # one tier only — filenames collide across tiers
+seed-paths: ["seeds/medium_data"]
 test-paths: ["tests"]
 snapshot-paths: ["snapshots"]
 analysis-paths: ["analyses"]
@@ -22,31 +16,15 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
-# ---------------------------------------------------------------------------
-# Silence warnings for empty workshop resource paths
-# ---------------------------------------------------------------------------
-
-flags:
-  warn_error_options:
-    silence:
-      - UnusedResourceConfigPath
-
-# ---------------------------------------------------------------------------
-# Variables — the raw order window, used by dim_dates' date spine
-# ---------------------------------------------------------------------------
 vars:
-  date_spine_start: "2023-01-01" # earliest customer signup precedes first order
+  date_spine_start: "2023-01-01"
   date_spine_end: "2027-01-01"
 
-# ---------------------------------------------------------------------------
-# Materialization + layering conventions (enforced project-wide)
-#   staging      -> view      (thin, 1:1 with source)
-#   intermediate -> ephemeral (never persisted; composed into marts)
-#   marts        -> table     (contracted, tested, exposed)
-# ---------------------------------------------------------------------------
 models:
   merlinco_apothecaries:
     +database: analytics
+    +static_analysis: strict
+
     staging:
       +materialized: view
       +schema: ai_staging
@@ -55,26 +33,11 @@ models:
     marts:
       +materialized: table
       +schema: ai_marts
-    # Governed Alembic workshop track. Existing project models remain in the standard
-    # staging/intermediate/marts paths; trainees create their solution here.
-
-    wizard:
-      +tags: [wizard]
-      staging:
-        +materialized: view
-        +schema: ai_staging
-      intermediate:
-        +materialized: ephemeral
-      marts:
-        +materialized: table
-        +schema: ai_marts
 
 seeds:
   +enabled: true
   merlinco_apothecaries:
     +database: analytics
     +schema: raw
-    # Load every raw column as text so the deliberate quirks (mixed case,
-    # dual timestamp formats, messy booleans) survive intact — staging does
-    # the cleaning. This mirrors how a real raw landing zone behaves.
+    # Preserve raw text quirks so staging owns typing and cleanup.
     +quote_columns: false

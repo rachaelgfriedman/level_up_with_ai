@@ -1,9 +1,16 @@
-# Prompt: Building the participant solution
-
-Use this prompt to build the Wizard Alembic slice.
+# Prompt: build the Alembic exercise
 
 ```text
-Implement the approved participant source-to-mart slice under `models/wizard/`. Append `__wizard` to every participant model name and use suffixed refs so the participant DAG can coexist with the canonical reference implementation.
+Use `building-governed-source-to-mart` to implement the approved two-model slice in
+`docs/merlinco/ALEMBIC_BUILD_SPEC.yml` directly in the canonical staging and mart
+folders.
 
-Follow the active layer guidance in dependency order, implement exactly the approved participant scope, and run Wizard-scoped validation and warehouse checks. Do not use facilitator references, retired answer-key models, or canonical Alembic implementation SQL as implementation input. If evidence contradicts the approved design, stop with the exact blocker and required decision.
+Enforce the readiness gate first: `stg_alembic_ops__brew_events` and `fct_brews` must
+not exist yet in their real folders. Follow the active staging and mart guidance in
+dependency order, implement exactly the approved columns and tests, preserve null brew
+durations, and leave existing semantic YAML unchanged.
+
+Run the specified parse, lint, `dbt build --select +fct_brews`, and warehouse checks.
+Record verification only in the spec. Stop with the exact blocker if evidence
+contradicts the approved design.
 ```

@@ -1,128 +1,111 @@
 # 🧙‍♀️✨🌿 Merlin & Co. Apothecaries
 
-Wizard-themed, jaffle-shop-style dbt project for the dbt Summit training
-**"Governed & Scalable AI-assisted Analytics with dbt."** Workshop raw source
-relations are pre-built in Snowflake, and the project builds staging → intermediate
-→ marts on top with dbt Fusion. Committed seeds preserve project portability for
-facilitator setup and reuse in other training environments.
+Merlin & Co. Apothecaries is a wizard-themed dbt training project for **Governed &
+Scalable AI-assisted Analytics with dbt**. It models a 15-shop potion retailer across
+sales, customers and guilds, and brew and shop operations.
 
-The project is built out as a **governed reference project** with contracts, tests,
-a semantic layer, conventions, and CI. The completed `alembic_ops` procurement /
-supply-cost slice lives in the canonical staging → intermediate → marts layers.
-Workshop participants build their own governed version under `models/wizard/` using
-`__wizard` node-name suffixes so both DAGs can coexist.
+The project runs on Snowflake with **dbt v2 Stable**. Trainees use Wizard to plan,
+build, validate, and review a deliberately unfinished Alembic Ops slice directly in
+the project’s canonical layers.
 
-**New here?** Read [AGENTS.md](AGENTS.md) and
-[docs/merlinco/STYLE_GUIDE.md](docs/merlinco/STYLE_GUIDE.md) first.
+**Start here:** [AGENTS.md](AGENTS.md), [SECURITY.md](SECURITY.md), and
+[docs/merlinco/STYLE_GUIDE.md](docs/merlinco/STYLE_GUIDE.md).
 
+## Current architecture
 
-## Workshop quickstart
+The starting DAG contains **20 models**:
 
+| Layer | Materialization | Count | Responsibility |
+|---|---:|---:|---|
+| `models/staging/` | view | 8 | Source-facing cleanup at the raw-table grain |
+| `models/intermediate/` | ephemeral | 5 | Joins, deduplication, enrichment, fanout control, and grain changes |
+| `models/marts/` | table | 7 | Contracted dimensions and facts for governed consumption |
 
-The workshop environment already contains the raw source relations. Trainees do not
-need to load seeds.
+The Alembic exercise adds two canonical models directly in those real folders:
 
-```bash
-dbt deps                     # install dbt_utils
-dbt parse                    # validate the project (no warehouse needed)
-dbt build                    # run + test models against your Snowflake connection
-```
+1. `models/staging/alembic_ops/stg_alembic_ops__brew_events.sql`
+2. `models/marts/fct_brews.sql`
 
-Staging reads the pre-built raw tables through `source()` declarations in
-`models/staging/<system>/_<system>__sources.yml`. Facilitators setting up the project
-in a new Snowflake environment can use the committed seeds to provision those raw
-relations before the workshop.
+Neither model exists in the trainee starting state. The approved design lives in
+[docs/merlinco/ALEMBIC_BUILD_SPEC.yml](docs/merlinco/ALEMBIC_BUILD_SPEC.yml).
 
-Local development requires a Snowflake connection profile; in dbt Platform the
-connection is managed in the environment settings.
-
-**The business:** Merlin & Co. Apothecaries is a 15-shop potion retail chain spanning five regions. Wizards (customers) buy potions in store, by courier owl, or via a marketplace. Shops brew their own stock from ingredients sourced from regional suppliers, and many customers belong to arcane guilds with tiered memberships.
-
-## Repo layout
+## Repository map
 
 ```text
-models/
-├── staging/          # completed source-facing models and source declarations
-├── intermediate/     # completed join, fanout, and aggregation patterns
-├── marts/            # completed contracted marts and semantic definitions
-└── wizard/           # participant workspace; nodes use the __wizard suffix
-macros/               # shared cleaning macros (to_boolean, copper_to_gold, conform_region, …)
-seeds/medium_data/    # portable raw CSV fixtures for facilitator/environment setup
-docs/merlinco/
-├── ERD.md                     # full schema diagram (columns, types, PK/FK markers)
-├── DATA_DICTIONARY.md         # per-table column notes and deliberate data quirks
-└── STYLE_GUIDE.md             # modeling + naming conventions
+.
+├── AGENTS.md                         # governed workflow and decision boundaries
+├── SECURITY.md                       # data handling and action policy
+├── dbt_project.yml                   # paths, materializations, schemas, seeds, and vars
+├── .agents/
+│   ├── ROUTING.md                    # route work to the smallest applicable skill
+│   └── skills/                       # planning, implementation, review, and support skills
+├── models/
+│   ├── staging/                      # source declarations and staging views
+│   ├── intermediate/                 # ephemeral transformations
+│   └── marts/                        # contracted marts and semantic definitions
+├── macros/                           # shared cleanup and currency macros
+├── seeds/medium_data/                # portable raw fixtures for environment setup
+├── docs/merlinco/                    # ERD, dictionary, style guide, and build spec
+└── docs/prompts/                     # workshop prompts for Wizard
 ```
-
-Canonical reference models live in `models/staging/`, `models/intermediate/`, and
-`models/marts/`. The isolated Wizard participant workspace uses `__wizard` node-name
-suffixes so participant relations can coexist with the canonical implementation.
-
-
-The `medium_data` tier (~15k orders / ~51k order items / 5k customers) is the lab default
-and the only tier `seed-paths` points at.
 
 ## Source systems
 
-The 12 tables come from three fictional source systems:
+The project declares **9 raw tables** across three fictional systems:
 
-| Folder | System | Tables |
+| Source | Domain | Raw tables |
 |---|---|---|
-| `seeds/medium_data/abra_pos/` | **Abracadabra POS** (point-of-sale) | `raw_potions`, `raw_orders`, `raw_order_items`, `raw_payments` |
-| `seeds/medium_data/grimoire_crm/` | **Grimoire CRM** | `raw_customers`, `raw_guilds`, `raw_guild_memberships` |
-| `seeds/medium_data/alembic_ops/` | **Alembic Ops** (production & procurement) | `raw_shops`, `raw_suppliers`, `raw_ingredients`, `raw_potion_ingredients`, `raw_brew_events` |
+| **Abracadabra POS** | Potions, orders, line items, and payments | `raw_potions`, `raw_orders`, `raw_order_items`, `raw_payments` |
+| **Grimoire CRM** | Wizards, guilds, and memberships | `raw_customers`, `raw_guilds`, `raw_guild_memberships` |
+| **Alembic Ops** | Shops and brewing | `raw_shops`, `raw_brew_events` |
 
-## ERD
+Workshop raw relations are pre-built in Snowflake, so trainees query them through
+`source()`. The committed seeds are portable facilitator fixtures.
 
-See **[docs/merlinco/ERD.md](docs/merlinco/ERD.md)** for the full schema diagram. Quick relationship overview:
+## Existing data products
 
+| Layer | Models |
+|---|---|
+| Staging | `stg_abra_pos__*`, `stg_grimoire_crm__*`, and `stg_alembic_ops__shops` |
+| Intermediate | `int_customers_with_current_membership`, `int_memberships_current`, `int_order_items_with_order_context`, `int_orders_with_payments`, `int_payments_with_order_context` |
+| Dimensions | `dim_dates`, `dim_potions`, `dim_shops`, `dim_wizards` |
+| Facts | `fct_order_items`, `fct_orders`, `fct_payments` |
 
-```mermaid
-erDiagram
-    raw_customers ||--o{ raw_orders : places
-    raw_customers ||--o{ raw_guild_memberships : holds
-    raw_guilds ||--o{ raw_guild_memberships : grants
-    raw_shops ||--o{ raw_orders : fulfills
-    raw_orders ||--|{ raw_order_items : contains
-    raw_orders ||--o{ raw_payments : "paid by"
-    raw_potions ||--o{ raw_order_items : "sold as"
-    raw_potions ||--o{ raw_potion_ingredients : "made from"
-    raw_potions ||--o{ raw_brew_events : "brewed in"
-    raw_shops ||--o{ raw_brew_events : hosts
-    raw_ingredients ||--o{ raw_potion_ingredients : "used in"
-    raw_suppliers ||--o{ raw_ingredients : supplies
+The existing Semantic Layer files are intentionally unchanged for the Day 2 exercise.
+
+## Workshop workflow
+
+1. **Explore and plan** the two-model slice in one project-owned build spec.
+2. **Approve** source grain, transformations, nullable brew durations, public columns,
+   tests, contract behavior, and deferred semantic scope.
+3. **Author one reusable skill:** `authoring-staging-models`.
+4. **Implement** the staging model and contracted fact in dependency order.
+5. **Verify** with `dbt build --select +fct_brews`, lint, contracts, tests, lineage,
+   and warehouse-backed acceptance checks.
+6. **Review** implementation and evidence against the same approved spec.
+
+Use these prompts:
+
+- [Planning prompt](docs/prompts/wizard_plan_prompt.md)
+- [Build prompt](docs/prompts/wizard_build_prompt.md)
+- [Developer onboarding prompt](docs/prompts/onboarding_prompt.md)
+
+## Development and validation
+
+```text
+dbt deps
+dbt parse --no-partial-parse
+dbt build --select +fct_brews
 ```
 
-## Downstream models (Kimball)
+SQL style is defined in `.sqlfluff`. Run lint against the two real model paths or
+through the supported Studio/CI lint workflow.
 
-Canonical models now cover both the core sales path and the Alembic procurement and brewing slice. The same Alembic outcome remains the hands-on exercise target under `models/wizard/` with `__wizard` suffixes.
+## Built-in analytical storylines
 
-| Layer | Canonical models |
-|---|---|
-| staging | `stg_` models for potions, orders, order items, payments, customers, guilds, guild memberships, shops, suppliers, ingredients, potion ingredients, and brew events |
-| intermediate | `int_customers_with_current_membership`, `int_memberships_current`, `int_order_items_with_order_context`, `int_orders_with_payments`, `int_payments_with_order_context`, `int_potion_supply_cost`, `int_brews_with_supply_cost` |
-| dims | `dim_wizards`, `dim_potions`, `dim_shops`, `dim_dates`, `dim_suppliers` |
-| facts | `fct_orders`, `fct_order_items`, `fct_payments`, `fct_brews` |
-
-Staging normalizes the deliberate raw quirks via shared macros (`to_boolean`,
-`copper_to_gold`, `conform_region` in [macros/](macros/)) plus direct casts and
-lightweight cleanup in the staging models. Marts carry enforced contracts + tests,
-and a semantic layer defines the governed metrics.
-
-## Built-in storylines
-
-- **Growth**: order volume roughly doubles across the two-year window (2024-07 → 2026-06)
-- **Seasonality**: Healing spikes in winter, Love potions ~2× share in February, Luck around the new year
-- **Regional spread**: wizard populations differ by region (~1.8× revenue spread top to bottom)
-- **Whales**: customer order counts follow a power-law — a few archmages drive outsized revenue
-- **Home-region loyalty**: 80% of orders happen in the customer's home region
-
-## Where the data comes from
-
-The 12 raw CSVs in `seeds/medium_data/` are committed as portable setup fixtures; the
-workshop itself uses pre-built raw relations. The fixtures were produced by a deterministic,
-stdlib-only generator (seeded RNG, so output is byte-identical on every run) that lives
-outside this training repo. See **[docs/merlinco/DATA_DICTIONARY.md](docs/merlinco/DATA_DICTIONARY.md)** for
-column-level details and the deliberate data quirks staging is built to clean up.
-
-
+- **Growth:** order volume roughly doubles across the two-year window.
+- **Seasonality:** potion categories have distinct seasonal patterns.
+- **Regional spread:** wizard populations and revenue differ across five regions.
+- **Customer concentration:** a small group of archmages drives outsized revenue.
+- **Home-region loyalty:** most orders occur in a wizard’s home region.
+- **Brew quality:** brew events support quality-failure and duration analysis.

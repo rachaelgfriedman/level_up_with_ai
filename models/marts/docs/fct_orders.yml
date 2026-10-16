@@ -1,0 +1,135 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: Order-grain fact with revenue, payment behavior, and conformed FKs. Order-grain semantic model over fct_orders.
+    config:
+      contract:
+        enforced: true
+    columns:
+      - name: order_id
+        data_type: varchar
+        description: Primary key — order identifier.
+        data_tests: [unique, not_null]
+        entity:
+          type: primary
+          name: order_id
+      - name: customer_id
+        data_type: varchar
+        description: FK to dim_wizards.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_wizards')
+                field: customer_id
+        entity:
+          type: foreign
+          name: customer
+      - name: shop_id
+        data_type: varchar
+        description: FK to dim_shops.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_shops')
+                field: shop_id
+        entity:
+          type: foreign
+          name: shop
+      - name: fulfillment_region
+        data_type: varchar
+        description: Region of the fulfilling shop.
+        dimension:
+          type: categorical
+      - name: order_status
+        data_type: varchar
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [completed, returned, cancelled, placed]
+        dimension:
+          type: categorical
+      - name: channel
+        data_type: varchar
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [in_store, courier_owl, marketplace]
+        dimension:
+          type: categorical
+      - name: line_item_count
+        data_type: integer
+      - name: total_quantity
+        data_type: integer
+      - name: gross_revenue_gold
+        data_type: number(38, 2)
+      - name: discount_gold
+        data_type: number(38, 2)
+      - name: net_revenue_gold
+        data_type: number(38, 2)
+        data_tests: [not_null]
+      - name: amount_paid_gold
+        data_type: number(38, 2)
+      - name: is_split_payment
+        data_type: boolean
+      - name: had_failed_attempt
+        data_type: boolean
+      - name: is_refunded
+        data_type: boolean
+      - name: ordered_at
+        data_type: timestamp_ntz
+        data_tests: [not_null]
+      - name: ordered_date
+        data_type: date
+        dimension:
+          type: time
+        granularity: day
+    semantic_model:
+      enabled: true
+      name: fct_orders
+    agg_time_dimension: ordered_date
+    metrics:
+      - name: total_net_revenue
+        description: Net revenue across all order statuses, in gold crowns.
+        type: simple
+        label: Total net revenue (gold)
+        agg: sum
+        agg_time_dimension: ordered_date
+        expr: net_revenue_gold
+      - name: completed_net_revenue
+        description: Net revenue for completed orders only, in gold crowns.
+        type: simple
+        label: Completed net revenue (gold)
+        agg: sum
+        agg_time_dimension: ordered_date
+        expr: net_revenue_gold
+        filter: |
+          {{ Dimension('order_id__order_status') }} = 'completed'
+      - name: total_discount_gold
+        description: Order-level discounts across all order statuses, in gold crowns.
+        type: simple
+        label: Total discount (gold)
+        agg: sum
+        agg_time_dimension: ordered_date
+        expr: discount_gold
+      - name: total_orders
+        description: Count of orders across all order statuses.
+        type: simple
+        label: Total orders
+        agg: count
+        agg_time_dimension: ordered_date
+        expr: order_id
+      - name: purchasing_customers
+        description: Distinct customers who placed at least one order.
+        type: simple
+        label: Purchasing customers
+        agg: count_distinct
+        agg_time_dimension: ordered_date
+        expr: customer_id
+      - name: gross_revenue
+        description: Gross line revenue in gold crowns.
+        agg: sum
+        expr: gross_revenue_gold
+        agg_time_dimension: ordered_date
+        type: simple
+        hidden: true
