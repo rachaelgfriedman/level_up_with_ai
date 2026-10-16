@@ -48,6 +48,15 @@ models:
         entity:
           type: foreign
           name: shop
+      - name: order_status
+        data_type: varchar
+        description: Current parent-order lifecycle status, lowercased.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [completed, returned, cancelled, placed]
+        dimension:
+          type: categorical
       - name: quantity
         data_type: integer
       - name: unit_price_gold
@@ -68,16 +77,11 @@ models:
     agg_time_dimension: ordered_date
     metrics:
       - name: total_units_sold
-        description: Total potion units sold across all order lines.
+        description: Potion units on completed orders.
         type: simple
         label: Total units sold
         agg: sum
         agg_time_dimension: ordered_date
         expr: quantity
-      - name: line_revenue
-        description: Line revenue in gold crowns.
-        agg: sum
-        expr: line_revenue_gold
-        agg_time_dimension: ordered_date
-        type: simple
-        hidden: true
+        filter: |
+          {{ Dimension('order_item__order_status') }} = 'completed'

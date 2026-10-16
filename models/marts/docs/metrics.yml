@@ -1,16 +1,16 @@
 version: 2
 
-# Cross-model governed metric definitions.
+# Governed ratio metrics for completed-order commercial analysis.
 metrics:
   - name: average_order_value
-    description: Net revenue across all order statuses divided by total orders, in gold crowns.
+    description: Total net revenue divided by total completed orders, in gold crowns.
     type: ratio
     label: Average order value (gold)
     numerator: total_net_revenue
     denominator: total_orders
 
   - name: orders_per_purchasing_customer
-    description: Total orders divided by distinct customers who placed at least one order.
+    description: Total completed orders divided by distinct customers with a completed order.
     type: ratio
     label: Orders per purchasing customer
     numerator: total_orders

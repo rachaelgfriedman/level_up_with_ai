@@ -1,7 +1,7 @@
 # Modeling style guide
 
-The human-readable companion to [AGENTS.md](../../AGENTS.md). Consistent layer,
-interface, and validation rules make generated work reviewable and trustworthy.
+Consistent layer, interface, and validation rules make generated work reviewable and
+trustworthy.
 
 ## Project shape
 
@@ -14,24 +14,23 @@ models/
 macros/               shared cleanup logic
 ```
 
-Trainees build the unfinished Alembic models directly in the real mart
-folders with canonical names. The starting branch intentionally omits both target
-models so they cannot collide with a completed implementation.
+Workshop participants build the intentionally missing `dim_shops` and `fct_brews`
+directly in `models/marts/`. Both required staging models already exist.
 
-**Seeds vs. sources.** Raw relations are pre-built for the workshop. Models read
-through `source()`; seeds remain portable setup fixtures.
+**Seeds vs. sources.** Raw relations are pre-built for the workshop. Models read through
+`source()`; seeds remain portable setup fixtures.
 
 ## Layering
 
-**Staging** reads exactly one declared source at source grain. It may rename, cast,
-trim, normalize case, and reuse approved cleanup macros. It does not join, filter,
-deduplicate, aggregate, or add downstream business logic.
+**Staging** reads exactly one declared source at source grain. It may rename, cast, trim,
+normalize case, and reuse approved cleanup macros. It does not join, filter, deduplicate,
+aggregate, or add downstream business logic.
 
 **Intermediate** owns joins, deduplication, fanout control, aggregation, and grain
-changes. The two-model Alembic exercise does not require an intermediate model.
+changes. The workshop marts preserve their staging grains and need no intermediate model.
 
-**Marts** publish contracted, tested public products. A simple fact may read directly
-from staging when no join or grain change is required.
+**Marts** publish contracted, tested public products. A simple dimension or fact may read
+directly from staging when no join or grain change is required.
 
 ## Naming and SQL structure
 
@@ -58,19 +57,19 @@ from staging when no join or grain change is required.
 - Every PK: `unique` and `not_null`.
 - Every governed FK: `relationships`.
 - Every normalized categorical: grounded `accepted_values`.
-- Every required field: `not_null` where the approved interface requires it.
+- Every required field: `not_null` where the public interface requires it.
 - Composite grains: a combination-uniqueness test.
 
-For the Alembic exercise, staging tests `brew_id` for uniqueness and non-nullness.
-The fact tests `brew_id`, both governed relationships, and the normalized quality
-domain. Nullable brew durations remain untested for non-nullness.
+For the workshop marts, `dim_shops` tests `shop_id` and canonical regions. `fct_brews`
+tests `brew_id`, potion and shop relationships, and the normalized quality domain.
+Nullable brew durations remain untested for non-nullness.
 
 ## Contracts
 
-Public marts declare a `data_type` for every output column and enforce contracts.
-SQL explicitly casts every public column to the matching type and order.
+Public marts declare a `data_type` for every output column and enforce contracts. SQL
+explicitly casts every public column to the matching type and order.
 
 ## CI and enforcement
 
-Repository instructions guide behavior. Scoped builds, contracts, tests, lint,
-lineage checks, warehouse acceptance checks, and accountable review establish trust.
+Repository instructions guide behavior. Scoped builds, contracts, tests, lint, lineage
+checks, warehouse acceptance checks, and accountable review establish trust.

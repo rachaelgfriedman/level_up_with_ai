@@ -27,11 +27,11 @@ models:
           name: customer
       - name: shop_id
         data_type: varchar
-        description: FK to dim_shops.
+        description: Shop identifier, validated against the existing Alembic Ops shop staging model.
         data_tests:
           - relationships:
               arguments:
-                to: ref('dim_shops')
+                to: ref('stg_alembic_ops__shops')
                 field: shop_id
         entity:
           type: foreign
@@ -39,6 +39,12 @@ models:
       - name: fulfillment_region
         data_type: varchar
         description: Region of the fulfilling shop.
+        dimension:
+          type: categorical
+      - name: is_home_region_order
+        data_type: boolean
+        description: True when the fulfilling shop is in the customer's conformed home region.
+        data_tests: [not_null]
         dimension:
           type: categorical
       - name: order_status
@@ -89,47 +95,39 @@ models:
       name: fct_orders
     agg_time_dimension: ordered_date
     metrics:
-      - name: total_net_revenue
-        description: Net revenue across all order statuses, in gold crowns.
-        type: simple
-        label: Total net revenue (gold)
-        agg: sum
-        agg_time_dimension: ordered_date
-        expr: net_revenue_gold
-      - name: completed_net_revenue
-        description: Net revenue for completed orders only, in gold crowns.
-        type: simple
-        label: Completed net revenue (gold)
-        agg: sum
-        agg_time_dimension: ordered_date
-        expr: net_revenue_gold
-        filter: |
-          {{ Dimension('order_id__order_status') }} = 'completed'
-      - name: total_discount_gold
-        description: Order-level discounts across all order statuses, in gold crowns.
-        type: simple
-        label: Total discount (gold)
-        agg: sum
-        agg_time_dimension: ordered_date
-        expr: discount_gold
       - name: total_orders
-        description: Count of orders across all order statuses.
+        description: Count of completed orders.
         type: simple
         label: Total orders
         agg: count
         agg_time_dimension: ordered_date
         expr: order_id
+        filter: |
+          {{ Dimension('order_id__order_status') }} = 'completed'
+      - name: total_gross_revenue
+        description: Gross item revenue before discounts for completed orders, in gold crowns.
+        type: simple
+        label: Total gross revenue (gold)
+        agg: sum
+        agg_time_dimension: ordered_date
+        expr: gross_revenue_gold
+        filter: |
+          {{ Dimension('order_id__order_status') }} = 'completed'
+      - name: total_net_revenue
+        description: Gross item revenue less discounts for completed orders, in gold crowns.
+        type: simple
+        label: Total net revenue (gold)
+        agg: sum
+        agg_time_dimension: ordered_date
+        expr: net_revenue_gold
+        filter: |
+          {{ Dimension('order_id__order_status') }} = 'completed'
       - name: purchasing_customers
-        description: Distinct customers who placed at least one order.
+        description: Distinct customers with at least one completed order.
         type: simple
         label: Purchasing customers
         agg: count_distinct
         agg_time_dimension: ordered_date
         expr: customer_id
-      - name: gross_revenue
-        description: Gross line revenue in gold crowns.
-        agg: sum
-        expr: gross_revenue_gold
-        agg_time_dimension: ordered_date
-        type: simple
-        hidden: true
+        filter: |
+          {{ Dimension('order_id__order_status') }} = 'completed'
