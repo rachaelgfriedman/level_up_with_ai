@@ -1,16 +1,14 @@
 version: 2
 
-# The raw Abracadabra POS tables as dbt SOURCES. Workshop raw relations are
-# pre-built in apothecaries.raw; declaring them as sources lets staging read them
-# via source() and provides source metadata, source-level tests, and a `source:`
-# selector. Committed seeds are portability fixtures for facilitator/environment
-# setup, not a trainee workshop prerequisite.
+# The raw Abracadabra POS tables as dbt sources. The schema follows the same
+# default naming convention as the seeds: <target.schema>_raw. This keeps each
+# workshop environment isolated while source() reads the relations its seeds create.
 
 sources:
   - name: abra_pos
     description: "Abracadabra POS — point-of-sale (potions, orders, order items, payments)."
     database: analytics
-    schema: pacific_life_merlin_co_dev_raw
+    schema: "{{ target.schema }}_raw"
     tables:
       - name: raw_potions
         description: "Potion catalog (120 rows)."
