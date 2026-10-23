@@ -1,12 +1,13 @@
 version: 2
 
-# Raw Alembic Ops tables as dbt sources over pre-built workshop relations.
-# Committed seeds are portability fixtures for facilitator or environment setup.
+# Raw Alembic Ops tables as dbt sources. The schema follows the same default
+# naming convention as the seeds: <target.schema>_raw.
+
 sources:
   - name: alembic_ops
     description: "Alembic Ops — shop and brew operations."
     database: analytics
-    schema: pacific_life_merlin_co_dev_raw
+    schema: "{{ target.schema }}_raw"
     tables:
       - name: raw_shops
         description: "Shops (15 rows, 3 per region). region is the canonical spelling."
