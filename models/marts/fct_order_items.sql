@@ -14,6 +14,9 @@ final as (
         customer_id::varchar as customer_id,
         shop_id::varchar as shop_id,
 
+        -- attributes
+        order_status::varchar as order_status,
+
         -- measures
         quantity::integer as quantity,
         unit_price_gold::number(38, 2) as unit_price_gold,

@@ -1,5 +1,5 @@
 -- Order grain enriched with line-item totals, rolled-up payment behavior, and
--- fulfillment region. One row per order.
+-- customer/fulfillment region context. One row per order.
 --
 -- Payments arrive at attempt grain (splits, failures, refunds each get a
 -- row), so we roll them up: successful amount paid, plus flags for the
@@ -7,6 +7,10 @@
 
 with orders as (
     select * from {{ ref('stg_abra_pos__orders') }}
+),
+
+customers as (
+    select * from {{ ref('stg_grimoire_crm__customers') }}
 ),
 
 order_items as (
@@ -54,6 +58,7 @@ final as (
 
         -- attributes
         shops.region as fulfillment_region,
+        customers.home_region = shops.region as is_home_region_order,
         orders.order_status,
         orders.channel,
 
@@ -74,6 +79,7 @@ final as (
         orders.ordered_at,
         payment_rollup.last_paid_at
     from orders
+    left join customers on orders.customer_id = customers.customer_id
     left join item_totals on orders.order_id = item_totals.order_id
     left join payment_rollup on orders.order_id = payment_rollup.order_id
     left join shops on orders.shop_id = shops.shop_id

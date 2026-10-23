@@ -20,6 +20,9 @@ final as (
         orders.customer_id,
         orders.shop_id,
 
+        -- attributes
+        orders.order_status,
+
         -- measures
         order_items.quantity,
         order_items.unit_price_gold,
